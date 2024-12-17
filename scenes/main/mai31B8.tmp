@@ -1,0 +1,208 @@
+[gd_scene load_steps=18 format=3 uid="uid://dwwbflscopu8a"]
+
+[ext_resource type="Script" path="res://scenes/main/main.gd" id="1_4ucy0"]
+[ext_resource type="Shader" path="res://water.gdshader" id="1_qvk4q"]
+[ext_resource type="PackedScene" uid="uid://cvu0nu6mms7ul" path="res://scenes/terrain/terrain.tscn" id="2_kgsjy"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_iwm3b"]
+sky_top_color = Color(0.368, 0.598, 0.92, 1)
+sky_horizon_color = Color(0.67, 0.67, 0.67, 1)
+
+[sub_resource type="Sky" id="Sky_w0j3h"]
+sky_material = SubResource("ProceduralSkyMaterial_iwm3b")
+
+[sub_resource type="Environment" id="Environment_5fw56"]
+background_mode = 2
+background_energy_multiplier = 0.5
+sky = SubResource("Sky_w0j3h")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_foujv"]
+noise_type = 3
+fractal_octaves = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6ld4f"]
+noise = SubResource("FastNoiseLite_foujv")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_65wai"]
+noise_type = 3
+fractal_octaves = 1
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qjwq6"]
+noise = SubResource("FastNoiseLite_65wai")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rctbc"]
+render_priority = 0
+shader = ExtResource("1_qvk4q")
+shader_parameter/time_speed = 0.05
+shader_parameter/surface_speed = 1.0
+shader_parameter/spin = 0.0
+shader_parameter/brightness = 0.6
+shader_parameter/color_intensity = 0.0
+shader_parameter/horizontal_frequency = 2.0
+shader_parameter/vertical_frequency = 2.0
+shader_parameter/size = 3.0
+shader_parameter/banding_bias = 0.6
+shader_parameter/wave_height = 0.5
+shader_parameter/texture_height = 0.5
+shader_parameter/color1 = Color(0.59, 0.761, 1, 1)
+shader_parameter/color2 = Color(0.274, 0.474, 0.98, 1)
+shader_parameter/color3 = Color(0.059, 0.389, 0.85, 1)
+shader_parameter/color4 = Color(0, 0.267, 1, 1)
+shader_parameter/wave_texture = SubResource("NoiseTexture2D_qjwq6")
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_6ld4f")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2qtsy"]
+size = Vector2(48, 32)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_w5ro6"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_25eyr"]
+size = Vector2(48, 32)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qm3r2"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_mgfoy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xuahe"]
+albedo_color = Color(0, 1, 0, 1)
+
+[node name="Main" type="Node"]
+script = ExtResource("1_4ucy0")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5fw56")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.75, 0.5, -0.433013, 0.5, -3.78552e-08, 0.866025, 0.433013, -0.866025, -0.25, 0, 0, 0)
+light_energy = 0.1
+shadow_enabled = true
+
+[node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.2264, 0, 0)
+material_override = SubResource("ShaderMaterial_rctbc")
+mesh = SubResource("PlaneMesh_2qtsy")
+
+[node name="Area3D" type="Area3D" parent="Water"]
+collision_layer = 2
+collision_mask = 2
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Water/Area3D"]
+shape = SubResource("WorldBoundaryShape3D_w5ro6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Water"]
+mesh = SubResource("PlaneMesh_25eyr")
+surface_material_override/0 = SubResource("StandardMaterial3D_qm3r2")
+
+[node name="Terrain" parent="." instance=ExtResource("2_kgsjy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, -3.70017)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 6.7, 22.677, 0.62)
+fov = 50.0
+
+[node name="TestBall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.821, 0.563, -11.366)
+mesh = SubResource("SphereMesh_mgfoy")
+surface_material_override/0 = SubResource("StandardMaterial3D_xuahe")
+
+[node name="TestBall2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.241, 0.563, 12.16)
+mesh = SubResource("SphereMesh_mgfoy")
+surface_material_override/0 = SubResource("StandardMaterial3D_xuahe")
+
+[node name="TestBall3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.126, 0.563, 0.143)
+mesh = SubResource("SphereMesh_mgfoy")
+surface_material_override/0 = SubResource("StandardMaterial3D_xuahe")
+
+[node name="SpawnPoints" type="Node" parent="."]
+
+[node name="NorthSpawnPoints" type="Node" parent="SpawnPoints"]
+unique_name_in_owner = true
+
+[node name="SpawnPoint1" type="Marker3D" parent="SpawnPoints/NorthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.04295, 0.563, -11.366)
+
+[node name="SpawnPoint2" type="Marker3D" parent="SpawnPoints/NorthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5903, 0.563, -11.366)
+
+[node name="SpawnPoint3" type="Marker3D" parent="SpawnPoints/NorthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.187, 0.563, -11.366)
+
+[node name="SouthSpawnPoints" type="Node" parent="SpawnPoints"]
+unique_name_in_owner = true
+
+[node name="SpawnPoint4" type="Marker3D" parent="SpawnPoints/SouthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.04295, 0.563, 12.2024)
+
+[node name="SpawnPoint5" type="Marker3D" parent="SpawnPoints/SouthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5903, 0.563, 12.2024)
+
+[node name="SpawnPoint6" type="Marker3D" parent="SpawnPoints/SouthSpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.187, 0.563, 12.2024)
+
+[node name="GameOverLabel" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 81.0
+offset_right = 20.0
+offset_bottom = 104.0
+grow_horizontal = 2
+text = "GAME OVER"
+
+[node name="StartLabel" type="Label" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_top = 81.0
+offset_right = 20.0
+offset_bottom = 104.0
+grow_horizontal = 2
+text = "DON'T LET THE SHIPS COLLIDE.
+USE THE LIGHT TO GUIDE THEM"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RestartButton" type="Button" parent="."]
+unique_name_in_owner = true
+process_mode = 2
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -4.0
+offset_top = -121.0
+offset_right = 4.0
+offset_bottom = -113.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "RESTART"
+
+[node name="SpawnTimer" type="Timer" parent="."]
+unique_name_in_owner = true
+wait_time = 5.0
+autostart = true
+
+[node name="Ships" type="Node" parent="."]
+unique_name_in_owner = true
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-4.37114e-08, 1, 4.37114e-08, 0, -4.37114e-08, 1, 1, 4.37114e-08, 0, 6.71653, 13.7931, 0.681041)
+light_energy = 10.0
+shadow_enabled = true
+spot_range = 32.0
+spot_angle = 10.0

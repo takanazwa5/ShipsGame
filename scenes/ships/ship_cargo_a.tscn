@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=3 uid="uid://dei7pkvfirafw"]
+
+[ext_resource type="Script" path="res://scenes/ships/ship.gd" id="1_gqq1y"]
+[ext_resource type="PackedScene" uid="uid://crhbgbjlhga18" path="res://watercraft_kit/ship-cargo-a.glb" id="2_x3s4s"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cvnri"]
+size = Vector3(0.979492, 0.85553, 2.61328)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xbigs"]
+size = Vector3(0.979492, 0.85553, 2.61328)
+
+[node name="ShipCargoA" type="CharacterBody3D"]
+collision_layer = 0
+collision_mask = 0
+script = ExtResource("1_gqq1y")
+
+[node name="ship-cargo-a2" parent="." instance=ExtResource("2_x3s4s")]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.422943, 0)
+shape = SubResource("BoxShape3D_cvnri")
+
+[node name="Lamp" type="OmniLight3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.02933, 0.492428)
+visible = false
+light_color = Color(0.0312711, 1, 0, 1)
+shadow_enabled = true
+omni_range = 1.50298
+
+[node name="VOSN" type="VisibleOnScreenNotifier3D" parent="."]
+unique_name_in_owner = true
+aabb = AABB(-0.479506, 0.00331563, -1.33213, 0.952176, 0.833212, 2.6545)
+
+[node name="Area3D" type="Area3D" parent="."]
+unique_name_in_owner = true
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.422943, 0)
+shape = SubResource("BoxShape3D_xbigs")
